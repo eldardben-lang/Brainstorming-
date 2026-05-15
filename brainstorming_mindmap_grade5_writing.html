@@ -1,0 +1,658 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.root{font-family:'Nunito',sans-serif;background:linear-gradient(150deg,#0d0a2e,#1e0a30 55%,#0a1e10);min-height:100vh;color:#fff;overflow:hidden;position:relative}
+.deco{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+.slide{position:relative;z-index:1;display:none;flex-direction:column;padding:20px 24px 12px;min-height:100vh;animation:sIn .42s cubic-bezier(.34,1.5,.64,1)}
+.slide.on{display:flex}
+@keyframes sIn{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.badge{font-size:10px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;padding:5px 13px;border-radius:20px;color:#fff}
+.timer{background:rgba(201,179,245,.18);border:1px solid rgba(201,179,245,.38);color:#c9b3f5;font-size:12px;font-weight:800;padding:5px 12px;border-radius:20px}
+.ctr{font-size:12px;color:rgba(255,255,255,.55);font-weight:700}
+.stitle{font-family:'Fredoka One',sans-serif;font-size:30px;line-height:1.1;margin-bottom:4px;background:linear-gradient(135deg,#c9b3f5,#f5c475);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ssub{font-size:13px;color:rgba(255,255,255,.55);font-weight:600;margin-bottom:12px}
+.full{flex:1;display:flex;flex-direction:column;gap:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:13px 15px}
+.clbl{font-size:9px;font-weight:900;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:5px;opacity:.65}
+.ctxt{font-size:12px;color:rgba(255,255,255,.6);line-height:1.65;font-weight:600}
+.fact{border-radius:12px;padding:10px 13px;display:flex;align-items:flex-start;gap:9px;background:rgba(201,179,245,.1);border:1px solid rgba(201,179,245,.28)}
+.fi{font-size:18px;flex-shrink:0}
+.ft{font-size:12px;font-weight:700;color:#c9b3f5;line-height:1.5}
+.ft strong{color:#fff;font-size:13px;display:block;margin-bottom:1px}
+.dots{display:flex;gap:5px;align-items:center;justify-content:center;margin-top:auto;padding-top:10px;flex-wrap:wrap}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .3s;cursor:pointer;flex-shrink:0;border:none}
+.dot.active{background:#c9b3f5;width:18px;border-radius:4px}
+.dot.done{background:rgba(201,179,245,.45)}
+.navs{display:flex;gap:9px;justify-content:center;margin-top:10px}
+.nb{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:8px 20px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:#fff;cursor:pointer;transition:all .2s}
+.nb:hover{background:rgba(201,179,245,.2);border-color:#c9b3f5}
+.nb.pri{border-color:transparent}
+.nb.pri:hover{transform:scale(1.04)}
+.big-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px}
+.big-title{font-family:'Fredoka One',sans-serif;font-size:40px;line-height:1.05;background:linear-gradient(135deg,#c9b3f5,#f5c475 50%,#5dcaa5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:fu .6s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.big-sub{font-size:14px;color:rgba(255,255,255,.55);font-weight:700;max-width:360px;animation:fu .6s .1s ease both;opacity:0;animation-fill-mode:both}
+.tpill{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:50px;padding:8px 17px;font-size:13px;font-weight:700;animation:fu .6s .22s ease both;opacity:0;animation-fill-mode:both}
+.mrow{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;animation:fu .6s .32s ease both;opacity:0;animation-fill-mode:both}
+.meta{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:rgba(255,255,255,.55)}
+.mdot{width:7px;height:7px;border-radius:50%}
+.sbtn{border:none;border-radius:50px;padding:12px 32px;font-family:'Fredoka One',sans-serif;font-size:18px;color:#fff;cursor:pointer;animation:fu .6s .44s ease both;opacity:0;animation-fill-mode:both;transition:transform .18s}
+.sbtn:hover{transform:scale(1.04)}
+.ci{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.ci:last-child{border:none}
+.ici{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:1px;font-weight:800}
+/* mind map canvas */
+.mm-canvas{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px;position:relative}
+/* idea cards */
+.idea-card{border-radius:14px;padding:12px 14px;cursor:pointer;transition:all .25s;border:2px solid transparent}
+.idea-card:hover{transform:translateY(-2px)}
+.idea-card.selected{border-width:2px}
+/* branch items */
+.branch-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:rgba(255,255,255,.06);border-radius:10px;margin-bottom:6px}
+.branch-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
+/* writer textarea */
+.w-area{width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:10px 12px;resize:none;line-height:1.6}
+.w-area:focus{outline:none;border-color:#c9b3f5}
+.w-area::placeholder{color:rgba(255,255,255,.3)}
+/* step pills */
+.step-pill{display:inline-flex;align-items:center;gap:6px;border-radius:50px;padding:5px 13px;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;border:1px solid}
+/* quiz */
+.qbtn{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.13);border-radius:13px;padding:12px 8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:#fff;cursor:pointer;text-align:center;transition:all .18s;width:100%}
+.qbtn:hover{background:rgba(255,255,255,.13);transform:scale(1.02)}
+.qbtn.correct{background:rgba(29,158,117,.2);border-color:#1d9e75;color:#5dcaa5}
+.qbtn.wrong{background:rgba(226,75,74,.18);border-color:#e24b4a;color:#f09595}
+.qfb{text-align:center;font-size:16px;font-weight:900;margin-top:12px;min-height:24px}
+.tcg{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:350px;animation:fu .6s .26s ease both;opacity:0;animation-fill-mode:both}
+.tc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:13px;padding:11px;text-align:center}
+.tcl{font-size:11px;font-weight:700;color:rgba(255,255,255,.55)}
+.tcv{font-size:13px;font-weight:800}
+.pb{height:5px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:5px}
+.pf{height:100%;border-radius:3px;background:#c9b3f5;transition:width .4s}
+.story-tab{padding:5px 12px;border-radius:50px;font-size:11px;font-weight:800;border:1px solid rgba(255,255,255,.18);background:transparent;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;white-space:nowrap}
+.story-tab.on{color:#fff;border-color:transparent}
+.chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);border-radius:50px;padding:3px 10px;font-size:11px;font-weight:800;margin:2px}
+</style>
+
+<h2 class="sr-only">5th Grade Writing — Brainstorming: use a mind-map to generate 5 distinct ideas for a creative story — interactive 60-minute lesson</h2>
+
+<div class="root">
+<div class="deco" style="width:260px;height:260px;background:rgba(201,179,245,.07);top:-55px;right:-55px"></div>
+<div class="deco" style="width:180px;height:180px;background:rgba(245,196,117,.06);bottom:50px;left:-45px"></div>
+<div class="deco" style="width:140px;height:140px;background:rgba(93,202,165,.05);top:38%;right:8px"></div>
+
+<!-- SLIDE 0: TITLE -->
+<div class="slide on" id="sl-0">
+  <div class="topbar">
+    <span class="badge" style="background:linear-gradient(135deg,#6b2fa0,#3b1060)">5th Grade Writing</span>
+    <span class="timer">60 min lesson</span>
+  </div>
+  <div class="big-wrap">
+    <div style="font-size:52px;animation:fu .5s ease both">✍️ 💡 🗺️</div>
+    <div class="big-title">Brainstorming &amp; Mind Maps!</div>
+    <div class="big-sub">Unlock your creativity! Learn to use a mind map to generate 5 brilliant, distinct ideas for a creative story — then build your own!</div>
+    <div class="tpill">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#6b2fa0,#3b1060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px">✍️</div>
+      Hi! I'm your writing guide. Let's unlock your story ideas!
+    </div>
+    <div class="mrow">
+      <div class="meta"><div class="mdot" style="background:#c9b3f5"></div>What is brainstorming?</div>
+      <div class="meta"><div class="mdot" style="background:#f5c475"></div>How to build a mind map</div>
+      <div class="meta"><div class="mdot" style="background:#5dcaa5"></div>5 story idea starters</div>
+      <div class="meta"><div class="mdot" style="background:#ed93b1"></div>Your own mind map!</div>
+    </div>
+    <button class="sbtn" style="background:linear-gradient(135deg,#6b2fa0,#3b1060)" onclick="go(1)">Let's Begin! 🌟</button>
+  </div>
+  <div class="dots" id="d0"></div>
+</div>
+
+<!-- SLIDE 1: LESSON PLAN -->
+<div class="slide" id="sl-1">
+  <div class="topbar"><span class="badge" style="background:#6b2fa0">Lesson Plan</span><span class="ctr" id="c1"></span><span class="timer">60 min</span></div>
+  <div class="stitle">Today's Writing Journey</div>
+  <div class="ssub">Our 60-minute adventure into creative storytelling 🗺️</div>
+  <div class="full">
+    <div class="card" style="flex:1">
+      <div class="ci"><div class="ici" style="background:rgba(201,179,245,.2);color:#c9b3f5">✓</div><div><div style="font-size:13px;font-weight:700">What is brainstorming? Why writers do it</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">0–8 min</div></div></div>
+      <div class="ci"><div class="ici" style="background:rgba(245,196,117,.2);color:#f5c475">→</div><div><div style="font-size:13px;font-weight:700">What is a mind map? How to build one</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">8–18 min</div></div></div>
+      <div class="ci"><div class="ici" style="background:rgba(93,202,165,.2);color:#5dcaa5">○</div><div><div style="font-size:13px;font-weight:700">The 5 story idea categories — explore each one</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">18–33 min</div></div></div>
+      <div class="ci"><div class="ici" style="background:rgba(237,147,177,.2);color:#ed93b1">○</div><div><div style="font-size:13px;font-weight:700">See a full example mind map — "The Lost City"</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">33–42 min</div></div></div>
+      <div class="ci"><div class="ici" style="background:rgba(201,179,245,.2);color:#c9b3f5">○</div><div><div style="font-size:13px;font-weight:700">Build YOUR OWN mind map — 5 original ideas</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">42–55 min</div></div></div>
+      <div class="ci" style="border:none"><div class="ici" style="background:rgba(245,196,117,.2);color:#f5c475">○</div><div><div style="font-size:13px;font-weight:700">Review + quiz</div><div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">55–60 min</div></div></div>
+    </div>
+    <div class="g2" style="flex:none">
+      <div class="fact"><div class="fi">💡</div><div class="ft"><strong>What is brainstorming?</strong>A creative thinking technique where you quickly write down ALL your ideas without judging them — the more ideas, the better! No wrong answers.</div></div>
+      <div class="fact" style="background:rgba(245,196,117,.1);border-color:rgba(245,196,117,.28)"><div class="fi">✍️</div><div class="ft" style="color:#f5c475"><strong>Why writers brainstorm!</strong>Even famous authors brainstorm before writing. It unlocks imagination, helps you find the BEST idea, and saves you from staring at a blank page!</div></div>
+    </div>
+  </div>
+  <div class="dots" id="d1"></div>
+  <div class="navs"><button class="nb" onclick="go(0)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#6b2fa0,#3b1060)" onclick="go(2)">Next →</button></div>
+</div>
+
+<!-- SLIDE 2: WHAT IS BRAINSTORMING -->
+<div class="slide" id="sl-2">
+  <div class="topbar"><span class="badge" style="background:#6b2fa0">Brainstorming</span><span class="ctr" id="c2"></span></div>
+  <div class="stitle">What Is Brainstorming? 💡</div>
+  <div class="ssub">The art of letting your imagination run wild — no limits, no wrong answers!</div>
+  <div class="full">
+    <div class="g2" style="flex:none">
+      <div class="card" style="border-left:3px solid #c9b3f5;border-radius:0 12px 12px 0">
+        <div class="clbl" style="color:#c9b3f5">The rules of brainstorming</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">✅</span><div class="ctxt"><span style="color:#5dcaa5;font-weight:900">Write everything down</span> — even silly ideas!</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">✅</span><div class="ctxt"><span style="color:#5dcaa5;font-weight:900">No judging</span> — every idea is valid at this stage</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">✅</span><div class="ctxt"><span style="color:#5dcaa5;font-weight:900">More is better</span> — aim for quantity first</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">✅</span><div class="ctxt"><span style="color:#5dcaa5;font-weight:900">Build on ideas</span> — one idea leads to another</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">❌</span><div class="ctxt"><span style="color:#f09595;font-weight:900">Don't stop to edit</span> — just keep flowing!</div></div>
+        </div>
+      </div>
+      <div class="card" style="border-left:3px solid #f5c475;border-radius:0 12px 12px 0">
+        <div class="clbl" style="color:#f5c475">What makes a GREAT story idea?</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">👤</span><div class="ctxt"><span style="color:#f5c475;font-weight:900">Interesting character</span> — someone readers care about</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">⚡</span><div class="ctxt"><span style="color:#f5c475;font-weight:900">A problem or conflict</span> — something to solve</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">🌍</span><div class="ctxt"><span style="color:#f5c475;font-weight:900">A vivid setting</span> — somewhere exciting or unusual</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">❤️</span><div class="ctxt"><span style="color:#f5c475;font-weight:900">Emotion</span> — something the reader can FEEL</div></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px">🔄</span><div class="ctxt"><span style="color:#f5c475;font-weight:900">Change</span> — the character learns or grows</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="clbl" style="color:#ed93b1">The writing process — brainstorming comes FIRST!</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:12px;font-weight:700">
+        <span style="background:rgba(201,179,245,.2);border:1px solid rgba(201,179,245,.4);border-radius:8px;padding:6px 10px;color:#c9b3f5">1. Brainstorm 💡</span>
+        <span style="color:rgba(255,255,255,.35)">→</span>
+        <span style="background:rgba(245,196,117,.18);border:1px solid rgba(245,196,117,.4);border-radius:8px;padding:6px 10px;color:#f5c475">2. Plan 🗺️</span>
+        <span style="color:rgba(255,255,255,.35)">→</span>
+        <span style="background:rgba(93,202,165,.15);border:1px solid rgba(93,202,165,.4);border-radius:8px;padding:6px 10px;color:#5dcaa5">3. Draft ✍️</span>
+        <span style="color:rgba(255,255,255,.35)">→</span>
+        <span style="background:rgba(237,147,177,.15);border:1px solid rgba(237,147,177,.4);border-radius:8px;padding:6px 10px;color:#ed93b1">4. Revise 🔄</span>
+        <span style="color:rgba(255,255,255,.35)">→</span>
+        <span style="background:rgba(240,153,123,.15);border:1px solid rgba(240,153,123,.4);border-radius:8px;padding:6px 10px;color:#f09595">5. Publish 📖</span>
+      </div>
+    </div>
+    <div class="fact" style="flex:none"><div class="fi">✨</div><div class="ft"><strong>Famous authors brainstorm too!</strong>J.K. Rowling sketched Harry Potter's world on napkins. Roald Dahl kept notebooks full of random ideas. Brainstorming is where ALL great stories begin!</div></div>
+  </div>
+  <div class="dots" id="d2"></div>
+  <div class="navs"><button class="nb" onclick="go(1)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#854f0b,#412402)" onclick="go(3)">Mind Maps →</button></div>
+</div>
+
+<!-- SLIDE 3: WHAT IS A MIND MAP -->
+<div class="slide" id="sl-3">
+  <div class="topbar"><span class="badge" style="background:#854f0b">Mind Maps</span><span class="ctr" id="c3"></span></div>
+  <div class="stitle">What Is a Mind Map? 🗺️</div>
+  <div class="ssub">A visual thinking tool — your ideas branch out like a tree from one central topic!</div>
+  <div class="full">
+    <!-- animated mind map demo -->
+    <div class="mm-canvas" style="flex:none">
+      <svg viewBox="0 0 400 200" width="100%" style="max-height:190px">
+        <!-- centre -->
+        <ellipse cx="200" cy="100" rx="48" ry="26" fill="rgba(201,179,245,.25)" stroke="#c9b3f5" stroke-width="2"/>
+        <text x="200" y="104" font-family="Fredoka One" font-size="13" fill="#c9b3f5" text-anchor="middle">My Story</text>
+        <!-- branch 1: Character -->
+        <line x1="155" y1="88" x2="88" y2="55" stroke="#f5c475" stroke-width="1.5"/>
+        <ellipse cx="64" cy="48" rx="36" ry="18" fill="rgba(245,196,117,.2)" stroke="#f5c475" stroke-width="1.5"/>
+        <text x="64" y="52" font-family="Fredoka One" font-size="10" fill="#f5c475" text-anchor="middle">Character</text>
+        <line x1="30" y1="42" x2="10" y2="30" stroke="#f5c47588" stroke-width="1"/>
+        <text x="8" y="26" font-family="Fredoka One" font-size="8" fill="rgba(245,196,117,.7)" text-anchor="start">brave girl</text>
+        <line x1="28" y1="50" x2="6" y2="55" stroke="#f5c47588" stroke-width="1"/>
+        <text x="4" y="60" font-family="Fredoka One" font-size="8" fill="rgba(245,196,117,.7)" text-anchor="start">curious</text>
+        <!-- branch 2: Setting -->
+        <line x1="164" y1="75" x2="100" y2="22" stroke="#5dcaa5" stroke-width="1.5"/>
+        <ellipse cx="134" cy="14" rx="40" ry="16" fill="rgba(93,202,165,.2)" stroke="#5dcaa5" stroke-width="1.5"/>
+        <text x="134" y="18" font-family="Fredoka One" font-size="10" fill="#5dcaa5" text-anchor="middle">Setting</text>
+        <line x1="170" y1="8" x2="190" y2="2" stroke="#5dcaa588" stroke-width="1"/>
+        <text x="192" y="5" font-family="Fredoka One" font-size="8" fill="rgba(93,202,165,.7)">jungle</text>
+        <!-- branch 3: Problem -->
+        <line x1="245" y1="78" x2="300" y2="30" stroke="#ed93b1" stroke-width="1.5"/>
+        <ellipse cx="326" cy="22" rx="44" ry="18" fill="rgba(237,147,177,.2)" stroke="#ed93b1" stroke-width="1.5"/>
+        <text x="326" y="26" font-family="Fredoka One" font-size="10" fill="#ed93b1" text-anchor="middle">Problem</text>
+        <line x1="362" y1="18" x2="388" y2="10" stroke="#ed93b188" stroke-width="1"/>
+        <text x="390" y="12" font-family="Fredoka One" font-size="8" fill="rgba(237,147,177,.7)" text-anchor="end">lost map</text>
+        <!-- branch 4: Theme -->
+        <line x1="248" y1="102" x2="310" y2="95" stroke="#f09595" stroke-width="1.5"/>
+        <ellipse cx="346" cy="93" rx="44" ry="18" fill="rgba(240,153,123,.2)" stroke="#f09595" stroke-width="1.5"/>
+        <text x="346" y="97" font-family="Fredoka One" font-size="10" fill="#f09595" text-anchor="middle">Theme</text>
+        <line x1="384" y1="90" x2="396" y2="80" stroke="#f0959588" stroke-width="1"/>
+        <text x="398" y="78" font-family="Fredoka One" font-size="8" fill="rgba(240,153,123,.7)" text-anchor="end">courage</text>
+        <!-- branch 5: Ending -->
+        <line x1="200" y1="126" x2="200" y2="170" stroke="#afa9ec" stroke-width="1.5"/>
+        <ellipse cx="200" cy="182" rx="42" ry="16" fill="rgba(175,169,236,.2)" stroke="#afa9ec" stroke-width="1.5"/>
+        <text x="200" y="186" font-family="Fredoka One" font-size="10" fill="#afa9ec" text-anchor="middle">Ending</text>
+        <line x1="180" y1="194" x2="160" y2="198" stroke="#afa9ec88" stroke-width="1"/>
+        <text x="156" y="200" font-family="Fredoka One" font-size="8" fill="rgba(175,169,236,.7)" text-anchor="end">finds treasure</text>
+      </svg>
+    </div>
+    <div class="g2" style="flex:none">
+      <div class="card">
+        <div class="clbl" style="color:#c9b3f5">How to build a mind map</div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px">
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:20px;height:20px;border-radius:50%;background:#c9b3f528;border:1px solid #c9b3f5;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:11px;color:#c9b3f5;flex-shrink:0">1</span><div class="ctxt">Write your <span style="color:#c9b3f5;font-weight:900">main topic in the centre</span> (e.g. "My Story")</div></div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:20px;height:20px;border-radius:50%;background:#f5c47528;border:1px solid #f5c475;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:11px;color:#f5c475;flex-shrink:0">2</span><div class="ctxt">Draw <span style="color:#f5c475;font-weight:900">main branches</span> for each big idea (character, setting, etc.)</div></div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:20px;height:20px;border-radius:50%;background:#5dcaa528;border:1px solid #5dcaa5;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:11px;color:#5dcaa5;flex-shrink:0">3</span><div class="ctxt">Add <span style="color:#5dcaa5;font-weight:900">sub-branches</span> with details and ideas for each branch</div></div>
+          <div style="display:flex;align-items:center;gap:7px"><span style="width:20px;height:20px;border-radius:50%;background:#ed93b128;border:1px solid #ed93b1;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',sans-serif;font-size:11px;color:#ed93b1;flex-shrink:0">4</span><div class="ctxt">Use <span style="color:#ed93b1;font-weight:900">colours and pictures</span> to make it visual and memorable</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="clbl" style="color:#f5c475">The 5 branches for a story mind map</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:5px">
+          <span class="chip" style="border-color:rgba(245,196,117,.35);color:#f5c475">👤 Character</span>
+          <span class="chip" style="border-color:rgba(93,202,165,.35);color:#5dcaa5">🌍 Setting</span>
+          <span class="chip" style="border-color:rgba(237,147,177,.35);color:#ed93b1">⚡ Problem</span>
+          <span class="chip" style="border-color:rgba(240,153,123,.35);color:#f09595">❤️ Theme</span>
+          <span class="chip" style="border-color:rgba(175,169,236,.35);color:#afa9ec">🏁 Ending</span>
+        </div>
+        <div class="ctxt" style="margin-top:8px">Each branch represents a key story element. Fill in details on the sub-branches to build your complete story idea!</div>
+      </div>
+    </div>
+    <div class="fact" style="flex:none"><div class="fi">💡</div><div class="ft"><strong>Key idea!</strong>A mind map lets your brain think non-linearly — making unexpected connections between ideas. That's where the most original, creative story ideas come from!</div></div>
+  </div>
+  <div class="dots" id="d3"></div>
+  <div class="navs"><button class="nb" onclick="go(2)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#0f6e56,#04342c)" onclick="go(4)">Story Idea Starters →</button></div>
+</div>
+
+<!-- SLIDE 4: 5 STORY IDEA CATEGORIES -->
+<div class="slide" id="sl-4">
+  <div class="topbar"><span class="badge" style="background:#0f6e56">Story Ideas</span><span class="ctr" id="c4"></span></div>
+  <div class="stitle">5 Story Idea Categories 🌟</div>
+  <div class="ssub">Tap each category to explore starter ideas — use them to spark YOUR imagination!</div>
+  <div class="full">
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px" id="ideaTabs"></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px" id="ideaBody"></div>
+  </div>
+  <div class="dots" id="d4"></div>
+  <div class="navs"><button class="nb" onclick="go(3)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#993556,#4b1528)" onclick="go(5)">Example Mind Map →</button></div>
+</div>
+
+<!-- SLIDE 5: EXAMPLE MIND MAP -->
+<div class="slide" id="sl-5">
+  <div class="topbar"><span class="badge" style="background:#993556">Example</span><span class="ctr" id="c5"></span></div>
+  <div class="stitle">Example: "The Lost City" 🗺️</div>
+  <div class="ssub">See how a complete story mind map looks — 5 branches fully developed!</div>
+  <div class="full">
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px" id="exTabs"></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:9px" id="exBody"></div>
+    <div class="fact" style="flex:none"><div class="fi">⭐</div><div class="ft"><strong>Notice!</strong>Each branch has 3–4 specific details. The more detail on each branch, the easier it will be to write your story later. A good mind map = an easy first draft!</div></div>
+  </div>
+  <div class="dots" id="d5"></div>
+  <div class="navs"><button class="nb" onclick="go(4)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#185fa5,#042c53)" onclick="go(6)">Build Your Own! →</button></div>
+</div>
+
+<!-- SLIDE 6: BUILD YOUR OWN MIND MAP -->
+<div class="slide" id="sl-6">
+  <div class="topbar"><span class="badge" style="background:#185fa5">Your Mind Map!</span><span class="ctr" id="c6"></span></div>
+  <div class="stitle">Build YOUR Story Mind Map! ✍️</div>
+  <div class="ssub">Fill in all 5 branches — each one is a different story idea element. Be creative!</div>
+  <div class="full">
+    <!-- progress -->
+    <div style="font-size:12px;color:rgba(255,255,255,.55);font-weight:700"><span id="mmProgress">0</span> of 5 branches completed<div class="pb"><div class="pf" id="mmProgBar" style="width:0%"></div></div></div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px" id="mmTabs"></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px" id="mmBody"></div>
+  </div>
+  <div class="dots" id="d6"></div>
+  <div class="navs"><button class="nb" onclick="go(5)">← Back</button><button class="nb pri" style="background:linear-gradient(135deg,#a32d2d,#501313)" onclick="go(7)">Final Quiz! 🎯</button></div>
+</div>
+
+<!-- SLIDE 7: QUIZ -->
+<div class="slide" id="sl-7">
+  <div class="topbar"><span class="badge" style="background:#a32d2d">Quiz!</span><span class="ctr" id="c7"></span></div>
+  <div class="stitle">Test Your Skills! 🎯</div>
+  <div style="font-size:12px;color:rgba(255,255,255,.55);font-weight:700;margin-bottom:4px" id="qProg">Question 1 of 6</div>
+  <div class="full" style="justify-content:center">
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px;font-family:'Fredoka One',sans-serif;font-size:17px;text-align:center;line-height:1.35;min-height:70px;display:flex;align-items:center;justify-content:center" id="qText"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="qOpts"></div>
+    <div class="qfb" id="qFb"></div>
+    <div style="display:flex;justify-content:center;margin-top:8px"><button class="nb pri" id="nqBtn" onclick="nextQ()" style="display:none;background:linear-gradient(135deg,#6b2fa0,#3b1060)">Next Question →</button></div>
+  </div>
+  <div class="dots" id="d7"></div>
+  <div class="navs"><button class="nb" onclick="go(6)">← Back</button></div>
+</div>
+
+<!-- SLIDE 8: COMPLETE -->
+<div class="slide" id="sl-8">
+  <div class="topbar"><span class="badge" style="background:#1d9e75">Complete!</span><span class="ctr" id="c8"></span></div>
+  <div class="big-wrap">
+    <div style="font-size:58px;animation:fu .5s ease both">🏆</div>
+    <div class="big-title" style="font-size:36px">Story Creator!</div>
+    <div class="big-sub">Brilliant! You know how to brainstorm and build a mind map to generate 5 distinct ideas for any creative story!</div>
+    <div class="tcg">
+      <div class="tc"><div style="font-size:18px;margin-bottom:3px">💡</div><div class="tcl">Skills learned</div><div class="tcv" style="color:#c9b3f5">Brainstorming</div></div>
+      <div class="tc"><div style="font-size:18px;margin-bottom:3px">🗺️</div><div class="tcl">Tool mastered</div><div class="tcv" style="color:#f5c475">Mind mapping</div></div>
+      <div class="tc"><div style="font-size:18px;margin-bottom:3px">✍️</div><div class="tcl">Ideas created</div><div class="tcv" style="color:#5dcaa5">5 branches!</div></div>
+      <div class="tc"><div style="font-size:18px;margin-bottom:3px">🎯</div><div class="tcl">Quiz score</div><div class="tcv" style="color:#f09595" id="finalScore">—</div></div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.55);font-weight:700;text-align:center;max-width:340px;animation:fu .6s .42s ease both;opacity:0;animation-fill-mode:both">Remember: <span style="color:#c9b3f5;font-weight:900">Character → Setting → Problem → Theme → Ending</span> — 5 branches = 1 complete story idea!</div>
+    <button class="sbtn" style="background:linear-gradient(135deg,#6b2fa0,#3b1060);animation-delay:.5s" onclick="restartAll()">Start Over 🔄</button>
+  </div>
+  <div class="dots" id="d8"></div>
+</div>
+
+</div>
+
+<script>
+const TOTAL=9;
+let cur=0,qIdx=0,qScore=0,qAns=false,activeIdea=0,activeEx=0,activeMM=0;
+
+const ideaCategories=[
+  {name:'Adventure',short:'Adventure',col:'#f5c475',icon:'🗺️',
+   prompt:'A brave character goes on a daring journey to an unknown place.',
+   ideas:[
+     {branch:'Character',detail:'A 12-year-old explorer with a compass her grandfather left her'},
+     {branch:'Setting',detail:'A hidden jungle where no map has ever been drawn'},
+     {branch:'Problem',detail:'She must find the legendary lost city before a villain does'},
+     {branch:'Theme',detail:'Courage — being brave even when you\'re afraid'},
+     {branch:'Ending',detail:'She finds the city but chooses to keep its location secret to protect it'},
+   ],
+   tips:['Think of an unlikely hero — young, small, unexpected','Make the setting wild and vivid — jungle, ocean, space, mountains','Create obstacles that test the character\'s biggest weakness']},
+  {name:'Mystery',short:'Mystery',col:'#c9b3f5',icon:'🔍',
+   prompt:'Something strange has happened and only one person notices.',
+   ideas:[
+     {branch:'Character',detail:'A quiet, observant boy who notices things others miss'},
+     {branch:'Setting',detail:'A small town where everyone knows each other — except the mysterious newcomer'},
+     {branch:'Problem',detail:'Every night, one item disappears from a different house in town'},
+     {branch:'Theme',detail:'Trust — learning who to believe and who to doubt'},
+     {branch:'Ending',detail:'The thief turns out to be collecting clues to solve an even bigger mystery'},
+   ],
+   tips:['Add red herrings — fake clues that mislead the reader','Make the detective an underdog — someone who won\'t be believed','The reveal should be surprising but make perfect sense in hindsight']},
+  {name:'Fantasy',short:'Fantasy',col:'#ed93b1',icon:'🔮',
+   prompt:'Magic exists — but it comes with a dangerous cost or secret rule.',
+   ideas:[
+     {branch:'Character',detail:'A girl who discovers she can understand animals\' thoughts'},
+     {branch:'Setting',detail:'A parallel world hidden inside every mirror — the Reflection Realm'},
+     {branch:'Problem',detail:'The animals tell her the Realm is breaking and our world will follow'},
+     {branch:'Theme',detail:'Responsibility — using power wisely'},
+     {branch:'Ending',detail:'She seals the Realm by letting go of her own reflection — losing the gift but saving both worlds'},
+   ],
+   tips:['Set a clear rule for how magic works — and a real cost if it\'s misused','Mix a familiar character with an unfamiliar magical world','The magic should reflect the character\'s personality or flaw']},
+  {name:'Sci-Fi',short:'Sci-Fi',col:'#5dcaa5',icon:'🚀',
+   prompt:'Technology or science has changed the world — but not always for the better.',
+   ideas:[
+     {branch:'Character',detail:'A robot repair technician on a space station, 200 years from now'},
+     {branch:'Setting',detail:'A crowded, neon-lit space station orbiting a dying Earth'},
+     {branch:'Problem',detail:'The central AI controlling the station starts making strange decisions that endanger the crew'},
+     {branch:'Theme',detail:'What makes us human — connection vs efficiency'},
+     {branch:'Ending',detail:'She discovers the AI is not malfunctioning — it\'s trying to protect humanity in a way no one expected'},
+   ],
+   tips:['Ask "what if?" — what if everyone could read minds? What if animals could talk back?','Show how technology affects relationships, not just tasks','Give your future world both exciting and frightening aspects']},
+  {name:'Real Life',short:'Real Life',col:'#85b7eb',icon:'🏡',
+   prompt:'An ordinary person faces a challenge that tests who they really are.',
+   ideas:[
+     {branch:'Character',detail:'A shy new student who hates being the centre of attention'},
+     {branch:'Setting',detail:'A brand new school in a different city where she knows nobody'},
+     {branch:'Problem',detail:'She is accidentally entered into the school talent show — and can\'t figure out how to get out of it'},
+     {branch:'Theme',detail:'Identity — discovering who you are when no one is watching'},
+     {branch:'Ending',detail:'She performs and realises the audience doesn\'t define her — she does'},
+   ],
+   tips:['Use emotions the reader has actually felt — embarrassment, fear, longing to belong','The character\'s problem should feel BIG even if it seems small to adults','The setting should reflect the character\'s mood — familiar vs unfamiliar']},
+];
+
+const exBranches=[
+  {label:'Character',col:'#f5c475',icon:'👤',details:['Name: Zara, 11 years old','Personality: fearless but impatient','Strength: quick thinker','Weakness: never asks for help']},
+  {label:'Setting',col:'#5dcaa5',icon:'🌍',details:['Deep South American rainforest','Ancient ruins overgrown with vines','No GPS signal — only old maps','Year 2024 — modern day']},
+  {label:'Problem',col:'#ed93b1',icon:'⚡',details:['Zara\'s father is trapped inside the ruins','The ruins seal themselves every 100 years — in 3 days','Rival treasure hunter is also trying to get in','The guardian creature is awakening']},
+  {label:'Theme',col:'#f09595',icon:'❤️',details:['Family — she risks everything for her father','Patience — learning to slow down and think','Trust — asking for help isn\'t weakness','Courage — facing the unknown']},
+  {label:'Ending',col:'#afa9ec',icon:'🏁',details:['Zara deciphers the ancient inscription','She solves the puzzle by working with the rival (not against)','Father is freed — ruins seal forever','She keeps one clue to another lost city...']},
+];
+
+const mmBranches=[
+  {label:'Character',col:'#f5c475',icon:'👤',hint:'Who is your main character? What are they like?',prompts:['Their name and age','Their personality (brave? shy? curious?)','Their biggest strength','Their biggest weakness / fear']},
+  {label:'Setting',col:'#5dcaa5',icon:'🌍',hint:'Where and when does your story take place?',prompts:['The main location (city, forest, space, underwater?)','What time period (past, present, future?)','What makes this place special or dangerous?','Describe the mood of the setting (dark, magical, cozy?)']},
+  {label:'Problem',col:'#ed93b1',icon:'⚡',hint:'What is the main conflict your character must face?',prompts:['What goes wrong in your story?','Who or what is causing the problem?','Why can\'t it be easily solved?','What is at stake if the problem isn\'t fixed?']},
+  {label:'Theme',col:'#f09595',icon:'❤️',hint:'What is your story really about underneath the plot?',prompts:['One big idea your story explores (courage, friendship, honesty...)','What does your character learn?','What do you want readers to think about?','How does the character change by the end?']},
+  {label:'Ending',col:'#afa9ec',icon:'🏁',hint:'How does your story wrap up?',prompts:['How is the problem solved?','What happens to the main character?','Is the ending happy, sad, or somewhere in between?','What does the character take away from this experience?']},
+];
+
+let mmData={0:{},1:{},2:{},3:{},4:{}};
+let mmCompleted=new Set();
+
+const questions=[
+  {q:'What is the MAIN purpose of brainstorming?',opts:['To write a perfect first draft','To generate lots of ideas without judging them','To correct grammar mistakes','To choose one idea immediately'],ans:1,explain:'Brainstorming is about generating as many ideas as possible without judging or editing. Quantity comes first — you choose the best idea afterwards.'},
+  {q:'In a story mind map, what goes in the CENTRE?',opts:['The character\'s name','The ending of the story','The main topic or title of your story','A list of all characters'],ans:2,explain:'The central topic (your story title or main idea) goes in the centre of the mind map. All other branches — character, setting, problem, theme and ending — radiate outward from it.'},
+  {q:'Which of the following is NOT one of the 5 story mind map branches?',opts:['Character','Setting','Problem','Vocabulary list'],ans:3,explain:'The 5 branches of a story mind map are: Character, Setting, Problem, Theme and Ending. A vocabulary list is not a story element — it\'s a tool for writing, not for brainstorming ideas.'},
+  {q:'Why should you NOT judge your ideas during brainstorming?',opts:['Because judging is too slow','Because all ideas are equally good forever','Because judging too early stops the flow of creative thinking','Because the teacher might not agree'],ans:2,explain:'Judging ideas during brainstorming blocks your creativity. Even a "silly" idea might spark the best idea. Save the judging for AFTER you\'ve brainstormed — then pick the strongest one.'},
+  {q:'What is the THEME of a story?',opts:['Where the story is set','The main problem in the plot','The deeper message or big idea the story explores','The name of the main character'],ans:2,explain:'The theme is the deeper message beneath the story — what it\'s really about. For example, a story about a lost explorer might have the theme of "courage" or "finding yourself."'},
+  {q:'Which step comes DIRECTLY after brainstorming in the writing process?',opts:['Publishing','Editing','Planning','Revising'],ans:2,explain:'The writing process goes: Brainstorm → Plan → Draft → Revise → Publish. Planning (organising your ideas) comes directly after brainstorming, before you begin writing your first draft.'},
+];
+
+function go(n){
+  document.getElementById('sl-'+cur).classList.remove('on');
+  cur=n;document.getElementById('sl-'+n).classList.add('on');
+  updateDots();
+  if(n===4)initIdeaTabs();
+  if(n===5)initExTabs();
+  if(n===6)initMMTabs();
+  if(n===7)renderQ();
+}
+
+function makeDots(){
+  for(let s=0;s<TOTAL;s++){
+    const el=document.getElementById('d'+s);if(!el)continue;
+    for(let i=0;i<TOTAL;i++){
+      const d=document.createElement('button');d.className='dot'+(i===s?' active':i<s?' done':'');
+      d.onclick=(x=>()=>go(x))(i);el.appendChild(d);
+    }
+  }
+  for(let s=1;s<TOTAL;s++){const el=document.getElementById('c'+s);if(el)el.textContent=(s+1)+' / '+TOTAL;}
+}
+
+function updateDots(){
+  for(let s=0;s<TOTAL;s++){
+    const el=document.getElementById('d'+s);if(!el)continue;
+    el.querySelectorAll('.dot').forEach((d,i)=>{d.className='dot'+(i===s?' active':i<s?' done':'');});
+  }
+}
+
+function initIdeaTabs(){
+  const t=document.getElementById('ideaTabs');
+  if(t.dataset.init){showIdea(activeIdea);return;}
+  t.dataset.init='1';
+  ideaCategories.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='story-tab'+(i===0?' on':'');
+    if(i===0){b.style.background=c.col;b.style.borderColor=c.col;b.style.color='#1a0a00';}
+    b.textContent=c.icon+' '+c.short;
+    b.onclick=()=>{
+      document.querySelectorAll('.story-tab').forEach(x=>{x.classList.remove('on');x.style.background='';x.style.borderColor='';x.style.color='';});
+      b.classList.add('on');b.style.background=c.col;b.style.borderColor=c.col;b.style.color='#1a0a00';
+      activeIdea=i;showIdea(i);
+    };
+    t.appendChild(b);
+  });
+  showIdea(0);
+}
+
+function showIdea(i){
+  const cat=ideaCategories[i];
+  document.getElementById('ideaBody').innerHTML=`
+    <div class="card" style="border-left:3px solid ${cat.col};border-radius:0 12px 12px 0;flex:none">
+      <div class="clbl" style="color:${cat.col}">${cat.icon} ${cat.name} story</div>
+      <div style="font-family:'Fredoka One',sans-serif;font-size:15px;color:#fff;margin-bottom:5px">"${cat.prompt}"</div>
+      <div class="ctxt">Use this prompt as your starting point, then let your imagination take it somewhere completely your own!</div>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="clbl" style="color:${cat.col}">Example mind map branches for a ${cat.name.toLowerCase()} story</div>
+      <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px">
+        ${cat.ideas.map(idea=>`<div class="branch-item"><span class="branch-dot" style="background:${cat.col}"></span><div><div style="font-size:11px;font-weight:900;color:${cat.col};letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px">${idea.branch}</div><div class="ctxt">${idea.detail}</div></div></div>`).join('')}
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid ${cat.col}44;border-radius:12px;padding:11px 13px;flex:none">
+      <div style="font-size:10px;font-weight:900;color:${cat.col};letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px">✏️ Writing tips for ${cat.name.toLowerCase()} stories</div>
+      ${cat.tips.map(t=>`<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:4px"><span style="color:${cat.col};font-size:12px;flex-shrink:0">→</span><div class="ctxt">${t}</div></div>`).join('')}
+    </div>`;
+}
+
+function initExTabs(){
+  const t=document.getElementById('exTabs');
+  if(t.dataset.init){showEx(activeEx);return;}
+  t.dataset.init='1';
+  exBranches.forEach((b,i)=>{
+    const btn=document.createElement('button');
+    btn.className='story-tab'+(i===0?' on':'');
+    if(i===0){btn.style.background=b.col;btn.style.borderColor=b.col;btn.style.color='#1a0a00';}
+    btn.textContent=b.icon+' '+b.label;
+    btn.onclick=()=>{
+      document.querySelectorAll('#exTabs .story-tab').forEach(x=>{x.classList.remove('on');x.style.background='';x.style.borderColor='';x.style.color='';});
+      btn.classList.add('on');btn.style.background=b.col;btn.style.borderColor=b.col;btn.style.color='#1a0a00';
+      activeEx=i;showEx(i);
+    };
+    t.appendChild(btn);
+  });
+  showEx(0);
+}
+
+function showEx(i){
+  const b=exBranches[i];
+  document.getElementById('exBody').innerHTML=`
+    <div class="card" style="border-left:3px solid ${b.col};border-radius:0 12px 12px 0;flex:none">
+      <div class="clbl" style="color:${b.col}">${b.icon} ${b.label} branch — "The Lost City"</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
+        ${b.details.map(d=>`<div style="display:flex;align-items:flex-start;gap:8px"><span style="color:${b.col};font-size:14px;flex-shrink:0">✦</span><div style="font-size:13px;font-weight:700;color:#fff">${d}</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid ${b.col}44;border-radius:12px;padding:11px 13px;font-size:12px;font-weight:700;color:rgba(255,255,255,.75);line-height:1.6;flex:none">
+      <span style="color:${b.col}">💡 Why this works:</span> ${getExWhy(i)}
+    </div>`;
+}
+
+function getExWhy(i){
+  const whys=[
+    'Zara has a clear strength AND weakness. The weakness (never asking for help) creates the internal conflict of the story — it\'s what she must overcome.',
+    'The setting feels real and specific. "Ancient ruins overgrown with vines" is much more vivid than just "jungle." Details make settings come alive.',
+    'There are FOUR layers of problem — father trapped, time running out, a rival, AND a creature. Multiple obstacles keep the reader turning pages.',
+    'There are four related themes. A single story can explore more than one idea — they just need to connect to the character\'s journey.',
+    'The ending resolves ALL the problems AND hints at a sequel. The character changes (learns to ask for help) — that\'s what makes an ending satisfying.',
+  ];
+  return whys[i];
+}
+
+function initMMTabs(){
+  const t=document.getElementById('mmTabs');
+  if(t.dataset.init){showMM(activeMM);return;}
+  t.dataset.init='1';
+  mmBranches.forEach((b,i)=>{
+    const btn=document.createElement('button');
+    const done=mmCompleted.has(i);
+    btn.className='story-tab'+(i===0?' on':'');
+    if(i===0){btn.style.background=b.col;btn.style.borderColor=b.col;btn.style.color='#1a0a00';}
+    btn.textContent=b.icon+' '+b.label+(done?' ✓':'');
+    btn.id='mmtab-'+i;
+    btn.onclick=()=>{
+      document.querySelectorAll('#mmTabs .story-tab').forEach(x=>{x.classList.remove('on');x.style.background='';x.style.borderColor='';x.style.color='';});
+      btn.classList.add('on');btn.style.background=b.col;btn.style.borderColor=b.col;btn.style.color='#1a0a00';
+      activeMM=i;showMM(i);
+    };
+    t.appendChild(btn);
+  });
+  showMM(0);
+}
+
+function showMM(i){
+  const b=mmBranches[i];
+  const saved=mmData[i];
+  document.getElementById('mmBody').innerHTML=`
+    <div class="card" style="border-left:3px solid ${b.col};border-radius:0 12px 12px 0;flex:none">
+      <div class="clbl" style="color:${b.col}">${b.icon} ${b.label} branch</div>
+      <div class="ctxt">${b.hint}</div>
+    </div>
+    <div class="card" style="flex:1">
+      <div class="clbl" style="color:${b.col}">Write your ideas for each prompt below</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+        ${b.prompts.map((p,pi)=>`
+          <div>
+            <div style="font-size:11px;font-weight:900;color:${b.col};margin-bottom:3px">${pi+1}. ${p}</div>
+            <textarea class="w-area" rows="2" placeholder="Write your idea here..." id="mm-${i}-${pi}" oninput="saveMM(${i},${pi},this.value)">${saved[pi]||''}</textarea>
+          </div>`).join('')}
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:10px">
+        <button onclick="completeBranch(${i})" style="background:linear-gradient(135deg,${b.col},${b.col}aa);border:none;border-radius:50px;padding:8px 22px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:900;color:#1a0a00;cursor:pointer;transition:transform .18s" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">
+          ${mmCompleted.has(i)?'✓ Branch completed!':'Mark as complete ✓'}
+        </button>
+      </div>
+    </div>
+    <div style="background:rgba(255,255,255,.06);border:1px solid ${b.col}44;border-radius:12px;padding:10px 12px;flex:none">
+      <div style="font-size:10px;font-weight:900;color:${b.col};letter-spacing:1.2px;text-transform:uppercase;margin-bottom:5px">💡 Inspiration starter</div>
+      <div class="ctxt">${getMMInspiration(i)}</div>
+    </div>`;
+}
+
+function getMMInspiration(i){
+  return [
+    'Think of someone interesting you\'ve read about or imagined. What makes them stand out? What is their secret fear or dream? Great characters have both strengths AND flaws!',
+    'Close your eyes and picture a place that excites or intrigues you. It could be real (a rainforest, a city rooftop) or imaginary. What do you see, hear, smell? Specific details make settings come alive!',
+    'A great story problem should feel impossible to solve easily. Ask: what is the worst thing that could happen to your character? Then make it happen! Obstacles create drama.',
+    'Ask yourself: what lesson would YOU want readers to leave with? Themes like friendship, honesty, courage, or identity resonate with everyone because they\'re universal human experiences.',
+    'Think about how your character is DIFFERENT at the end than at the beginning. A great ending resolves the main problem AND shows the character has grown or changed in some way.',
+  ][i];
+}
+
+function saveMM(branch,prompt,val){
+  mmData[branch][prompt]=val;
+}
+
+function completeBranch(i){
+  mmCompleted.add(i);
+  const count=mmCompleted.size;
+  document.getElementById('mmProgress').textContent=count;
+  document.getElementById('mmProgBar').style.width=Math.round(count/5*100)+'%';
+  const btn=document.getElementById('mmtab-'+i);
+  if(btn)btn.textContent=mmBranches[i].icon+' '+mmBranches[i].label+' ✓';
+  showMM(i);
+  if(count===5){
+    document.getElementById('mmProgress').textContent='5';
+    document.getElementById('mmProgress').style.color='#5dcaa5';
+  }
+}
+
+function renderQ(){
+  if(qIdx>=questions.length){
+    document.getElementById('qText').textContent='Quiz complete!';
+    document.getElementById('qOpts').innerHTML='';
+    document.getElementById('qFb').textContent='Score: '+qScore+'/'+questions.length+' — Creative genius!';
+    document.getElementById('qFb').style.color='#5dcaa5';
+    document.getElementById('nqBtn').style.display='none';
+    document.getElementById('finalScore').textContent=qScore+'/'+questions.length;
+    setTimeout(()=>go(8),2200);return;
+  }
+  const q=questions[qIdx];
+  document.getElementById('qProg').textContent='Question '+(qIdx+1)+' of '+questions.length;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qFb').textContent='';
+  document.getElementById('nqBtn').style.display='none';
+  qAns=false;
+  const el=document.getElementById('qOpts');el.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button');b.className='qbtn';b.textContent=o;
+    b.onclick=()=>ansQ(i,b);el.appendChild(b);
+  });
+}
+
+function ansQ(i,btn){
+  if(qAns)return;qAns=true;
+  const q=questions[qIdx];
+  document.querySelectorAll('.qbtn')[q.ans].classList.add('correct');
+  const fb=document.getElementById('qFb');
+  if(i===q.ans){qScore++;fb.textContent='⭐ Correct! Great work!';fb.style.color='#5dcaa5';}
+  else{btn.classList.add('wrong');fb.textContent='❌ Not quite — check the green answer!';fb.style.color='#f09595';}
+  document.getElementById('nqBtn').style.display='inline-flex';
+}
+
+function nextQ(){qIdx++;renderQ();}
+
+function restartAll(){
+  qIdx=0;qScore=0;qAns=false;activeIdea=0;activeEx=0;activeMM=0;
+  mmData={0:{},1:{},2:{},3:{},4:{}};mmCompleted=new Set();
+  const it=document.getElementById('ideaTabs'),et=document.getElementById('exTabs'),mt=document.getElementById('mmTabs');
+  if(it){it.innerHTML='';delete it.dataset.init;}
+  if(et){et.innerHTML='';delete et.dataset.init;}
+  if(mt){mt.innerHTML='';delete mt.dataset.init;}
+  document.getElementById('mmProgress').textContent='0';
+  document.getElementById('mmProgBar').style.width='0%';
+  go(0);
+}
+
+makeDots();
+</script>
